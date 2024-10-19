@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Analysis Results</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <h1>Credit Products Analysis</h1>
+    <p>Total Applications: {{ total_applications }}</p>
+    <p>Successful Applications: {{ successful_applications }}</p>
+    <p>Unsuccessful Applications: {{ unsuccessful_applications }}</p>
+    <p>Total Revenue: {{ total_revenue }}</p>
+    <p>Average Revenue: {{ average_revenue }}</p>
+
+    <h2>Success Rate of Credit Applications</h2>
+    <img src="{{ plot_url }}" alt="Success Rate Plot">
+</body>
+</html>

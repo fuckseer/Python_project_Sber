@@ -25,12 +25,16 @@ async def main_page(request: Request):
 @app.post("/uploadfile/", response_class=HTMLResponse)
 async def analyze_credit_products(request: Request, file: UploadFile = File(...)):
     # Чтение файла и анализ
-    df = pd.read_excel(file.file)
+    df = pd.read_excel(file.filename)
+    df['Статус'] = df['Статус'].fillna('unknown')
+
+    # Заполняем пропуски в столбце revenue нулями или любым другим значением
+    df['Запрошенная сумма'] = df['Запрошенная сумма'].fillna(0)
     total_applications = df.shape[0]
-    successful_applications = df[df['status'] == 'approved'].shape[0]
-    unsuccessful_applications = df[df['status'] == 'declined'].shape[0]
-    total_revenue = df['revenue'].sum()
-    average_revenue = df['revenue'].mean()
+    successful_applications = df[df['Статус'] == 'Одобрен'].shape[0]
+    unsuccessful_applications = df[df['Статус'] == 'Отказ'].shape[0]
+    total_revenue = df['Запрошенная сумма'].sum()
+    average_revenue = df['Запрошенная сумма'].mean()
 
     # Генерация графика
     fig, ax = plt.subplots()
@@ -57,7 +61,7 @@ async def analyze_credit_products(request: Request, file: UploadFile = File(...)
 async def get_plot():
     # Вернем график как изображение
     fig, ax = plt.subplots()
-    ax.pie([70, 30], labels=['Approved', 'Declined'], autopct='%1.1f%%')
+    ax.pie([70, 30], labels=['Одобрен', 'Отказ'], autopct='%1.1f%%')
     plt.title("Success Rate of Credit Applications")
     buf = io.BytesIO()
     plt.savefig(buf, format='png')

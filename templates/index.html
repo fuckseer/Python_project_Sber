@@ -1,14 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Upload Credit Products File</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Products Analysis</title>
+    <!-- Подключаем Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Helvetica:wght@300;500;700&display=swap">
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <h1>Upload a File for Credit Products Analysis</h1>
-    <form action="/uploadfile/" enctype="multipart/form-data" method="post">
-        <input type="file" name="file">
-        <button type="submit">Upload and Analyze</button>
-    </form>
+    <div class="container">
+        <header>
+            <h1>Analyze Your Credit Products</h1>
+            <p>Upload your file to get detailed insights</p>
+        </header>
+
+        <div class="form-container">
+            <form action="/uploadfile/" enctype="multipart/form-data" method="post" class="upload-form">
+                <label for="fileInput" class="file-label">Choose File</label>
+                <input type="file" name="file" id="fileInput" class="file-input" required>
+                <button type="submit" class="btn">Upload</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Фоновая анимация -->
+    <div class="background-animation"></div>
 </body>
 </html>
+

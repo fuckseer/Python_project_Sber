@@ -1,10 +1,144 @@
+/* Общие стили для страницы */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-}
-h1, h2 {
+    font-family: 'Helvetica', sans-serif;
+    background-color: #f9f9f9;
     color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
-form {
+
+.container {
+    text-align: center;
+    background-color: #ffffff;
+    padding: 50px;
+    border-radius: 20px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 10;
+    max-width: 600px;
+    width: 100%;
+}
+
+header h1 {
+    font-size: 2.5em;
+    font-weight: 500;
+    color: #333;
     margin-bottom: 20px;
+    line-height: 1.2;
+    animation: fadeInDown 1s ease-in-out;
+}
+
+header p {
+    font-size: 1.2em;
+    font-weight: 300;
+    color: #666;
+    margin-bottom: 40px;
+    animation: fadeInUp 1s ease-in-out;
+}
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.upload-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.file-label {
+    background-color: #007aff;
+    color: white;
+    padding: 15px 50px;
+    border-radius: 25px;
+    font-size: 1.2em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 8px 15px rgba(0, 123, 255, 0.2);
+    margin-bottom: 20px;
+}
+
+.file-label:hover {
+    background-color: #005bb5;
+    transform: translateY(-5px);
+}
+
+.file-input {
+    display: none; /* Скрываем стандартное поле загрузки файла */
+}
+
+.btn {
+    padding: 15px 40px;
+    font-size: 1.2em;
+    font-weight: 500;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 8px 15px rgba(40, 167, 69, 0.2);
+}
+
+.btn:hover {
+    background-color: #218838;
+    transform: translateY(-5px);
+}
+
+.background-animation {
+    position: absolute;
+    top: -150px;
+    right: -150px;
+    width: 400px;
+    height: 400px;
+    background-color: rgba(0, 122, 255, 0.2);
+    border-radius: 50%;
+    animation: floating 6s infinite ease-in-out;
+    z-index: -1;
+}
+
+@keyframes floating {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(15px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

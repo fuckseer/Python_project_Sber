@@ -5,14 +5,38 @@
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <h1>Credit Products Analysis</h1>
-    <p>Total Applications: {{ total_applications }}</p>
-    <p>Successful Applications: {{ successful_applications }}</p>
-    <p>Unsuccessful Applications: {{ unsuccessful_applications }}</p>
-    <p>Total Revenue: {{ total_revenue }}</p>
-    <p>Average Revenue: {{ average_revenue }}</p>
+    <div class="container">
+        <div class="header">
+            <h1>Analysis Results</h1>
+        </div>
 
-    <h2>Success Rate of Credit Applications</h2>
-    <img src="{{ plot_url }}" alt="Success Rate Plot">
+        <div class="stats-grid">
+            <div class="card">
+                <h2>Total Applications</h2>
+                <p>{{ total_applications }}</p>
+            </div>
+            <div class="card">
+                <h2>Successful Applications</h2>
+                <p>{{ successful_applications }}</p>
+            </div>
+            <div class="card">
+                <h2>Unsuccessful Applications</h2>
+                <p>{{ unsuccessful_applications }}</p>
+            </div>
+            <div class="card">
+                <h2>Total Revenue</h2>
+                <p>{{ total_revenue }}</p>
+            </div>
+            <div class="card">
+                <h2>Average Revenue</h2>
+                <p>{{ average_revenue }}</p>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h2>Success Rate of Credit Applications</h2>
+            <img src="{{ plot_url }}" alt="Success Rate Plot">
+        </div>
+    </div>
 </body>
 </html>

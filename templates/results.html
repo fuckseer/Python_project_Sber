@@ -1,41 +1,35 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Analysis Results</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Products Analysis</title>
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>Analysis Results</h1>
+        <header>
+            <h1>Credit Product Applications Analysis</h1>
+        </header>
+
+        <div>
+            <p>Total Applications: {{ total_applications }}</p>
+            <p>Approved Applications: {{ approved_applications }}</p>
+            <p>Conversion Rate: {{ conversion_rate }}%</p>
         </div>
 
-        <div class="stats-grid">
-            <div class="card">
-                <h2>Total Applications</h2>
-                <p>{{ total_applications }}</p>
-            </div>
-            <div class="card">
-                <h2>Successful Applications</h2>
-                <p>{{ successful_applications }}</p>
-            </div>
-            <div class="card">
-                <h2>Unsuccessful Applications</h2>
-                <p>{{ unsuccessful_applications }}</p>
-            </div>
-            <div class="card">
-                <h2>Total Revenue</h2>
-                <p>{{ total_revenue }}</p>
-            </div>
-            <div class="card">
-                <h2>Average Revenue</h2>
-                <p>{{ average_revenue }}</p>
-            </div>
+        <div>
+            <h3>Applications by Status:</h3>
+            <ul>
+                {% for status, count in status_counts.items() %}
+                    <li>{{ status }}: {{ count }}</li>
+                {% endfor %}
+            </ul>
         </div>
 
-        <div class="chart-container">
-            <h2>Success Rate of Credit Applications</h2>
-            <img src="{{ plot_url }}" alt="Success Rate Plot">
+        <div>
+            <h3>Interactive Chart</h3>
+            <div>{{ graph_html|safe }}</div>
         </div>
     </div>
 </body>

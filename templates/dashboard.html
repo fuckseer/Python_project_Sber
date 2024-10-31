@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Products Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+    <header>
+        Credit Products Dashboard
+    </header>
+
+    <div class="filter-container">
+        <label for="product-select">Выберите продукт:</label>
+        <select id="product-select" name="product">
+            <option value="all">Все продукты</option>
+            {% for product in products %}
+                <option value="{{ product }}">{{ product }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="graphs-container">
+        <div class="graph-box">
+            <h3>Распределение статусов</h3>
+            <div id="status-graph">{{ graph_html1|safe }}</div>
+        </div>
+
+        <div class="graph-box">
+            <h3>Конверсия по продуктам</h3>
+            <div id="conversion-graph">{{ graph_html2|safe }}</div>
+        </div>
+
+        <div class="graph-box">
+            <h3>Сумма выдач по дням</h3>
+            <div id="sum-graph">{{ graph_html3|safe }}</div>
+        </div>
+    </div>
+
+
+    <script>
+        const select = document.getElementById("product-select");
+        select.addEventListener("change", function() {
+            const selectedProduct = select.value;
+            fetch(`/update_dashboard?product=${selectedProduct}`)
+                .then(response => response.json())
+                .then(data => {
+                    const statusGraph = document.getElementById("status-graph");
+                    const conversionGraph = document.getElementById("conversion-graph");
+                    const sumGraph = document.getElementById("sum-graph");
+
+                    Plotly.react(statusGraph, JSON.parse(data.statusGraph).data, JSON.parse(data.statusGraph).layout);
+                    Plotly.react(conversionGraph, JSON.parse(data.conversionGraph).data, JSON.parse(data.conversionGraph).layout);
+                    Plotly.react(sumGraph, JSON.parse(data.sumGraph).data, JSON.parse(data.sumGraph).layout);
+                })
+                .catch(error => console.error('Error updating graphs:', error));
+        });
+    </script>
+</body>
+</html>

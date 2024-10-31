@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Credit Products Dashboard</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <div class="container">
+<div class="container" id="dashboard"> <!-- Добавлен id="dashboard" -->
+
     <header>
         Credit Products Dashboard
     </header>
@@ -18,7 +20,7 @@
         <select id="product-select" name="product">
             <option value="all">Все продукты</option>
             {% for product in products %}
-                <option value="{{ product }}">{{ product }}</option>
+            <option value="{{ product }}">{{ product }}</option>
             {% endfor %}
         </select>
     </div>
@@ -39,25 +41,42 @@
             <div id="sum-graph">{{ graph_html3|safe }}</div>
         </div>
     </div>
+</div>
 
+<div style="text-align: center; margin-top: 20px;">
+    <button onclick="downloadPDF()">Сохранить отчет в PDF</button>
+</div>
 
-    <script>
-        const select = document.getElementById("product-select");
-        select.addEventListener("change", function() {
-            const selectedProduct = select.value;
-            fetch(`/update_dashboard?product=${selectedProduct}`)
-                .then(response => response.json())
-                .then(data => {
-                    const statusGraph = document.getElementById("status-graph");
-                    const conversionGraph = document.getElementById("conversion-graph");
-                    const sumGraph = document.getElementById("sum-graph");
+<script>
+    const select = document.getElementById("product-select");
+    select.addEventListener("change", function() {
+        const selectedProduct = select.value;
+        fetch(`/update_dashboard?product=${selectedProduct}`)
+            .then(response => response.json())
+            .then(data => {
+                const statusGraph = document.getElementById("status-graph");
+                const conversionGraph = document.getElementById("conversion-graph");
+                const sumGraph = document.getElementById("sum-graph");
 
-                    Plotly.react(statusGraph, JSON.parse(data.statusGraph).data, JSON.parse(data.statusGraph).layout);
-                    Plotly.react(conversionGraph, JSON.parse(data.conversionGraph).data, JSON.parse(data.conversionGraph).layout);
-                    Plotly.react(sumGraph, JSON.parse(data.sumGraph).data, JSON.parse(data.sumGraph).layout);
-                })
-                .catch(error => console.error('Error updating graphs:', error));
-        });
-    </script>
+                Plotly.react(statusGraph, JSON.parse(data.statusGraph).data, JSON.parse(data.statusGraph).layout);
+                Plotly.react(conversionGraph, JSON.parse(data.conversionGraph).data, JSON.parse(data.conversionGraph).layout);
+                Plotly.react(sumGraph, JSON.parse(data.sumGraph).data, JSON.parse(data.sumGraph).layout);
+            })
+            .catch(error => console.error('Error updating graphs:', error));
+    });
+
+    function downloadPDF() {
+        const element = document.getElementById('dashboard'); // Захват всего контейнера "dashboard"
+        const options = {
+            margin:       0.5,
+            filename:     'Credit_Products_Report.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(options).from(element).save();
+    }
+</script>
 </body>
 </html>

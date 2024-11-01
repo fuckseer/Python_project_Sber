@@ -32,6 +32,10 @@ async def upload_file(request: Request, file: UploadFile = File(...)):
             data['Дата'] = pd.to_datetime(data['Дата заявки'])
 
             products = list(data['Продукт'].unique())
+            products_counts = data['Продукт'].value_counts()
+
+            rate_analysis = data.groupby(['Дата заявки','Продукт'])['Ставка'].agg(['mean', 'min', 'max']).reset_index()
+            rate_analysis.columns = ['Дата заявки', 'Продукт', 'Средняя ставка', 'Минимальная ставка', 'Максимальная ставка']
 
             max_date_per_application = data.loc[data.groupby('ID заявки')['Дата заявки'].idxmax()]
             status_counts_by_product = max_date_per_application['Статус'].value_counts()
@@ -45,20 +49,24 @@ async def upload_file(request: Request, file: UploadFile = File(...)):
             fig3 = px.line(sum_by_day, x='Дата заявки', y='Запрошенная сумма', color='Продукт', title="Сумма выдач по дням и продуктам")
             fig1 = px.bar(status_counts_by_product, title='Статусы заявок')
             fig2 = px.pie(values=conversion_rate_by_product, names=conversion_rate_by_product.index, title='Конверсия по продуктам')
+            fig4 = px.line(rate_analysis, x='Дата заявки', y='Продукт', color='Средняя ставка', title='Распределение ставок')
 
             graph_html1 = fig1.to_html(full_html=False)
             graph_html2 = fig2.to_html(full_html=False)
             graph_html3 = fig3.to_html(full_html=False)
+            graph_html4 = fig4.to_html(full_html=False)
+
 
             return templates.TemplateResponse("dashboard.html", {
                 "request": request,
                 "graph_html1": graph_html1,
                 "graph_html2": graph_html2,
                 "graph_html3": graph_html3,
+                "graph_html4": graph_html4,
                 "products": products
             })
     except Exception as e:
-        raise HTTPException (status_code=500, detail=f'Ошибка обработки файла: {str(e)}')
+        raise HTTPException (status_code=500, detail=f'Ошибка обработки файла: {(str(e))}')
 
 @app.get("/update_dashboard")
 async def update_dashboard(product: str):
@@ -70,7 +78,8 @@ async def update_dashboard(product: str):
 
     max_date_per_application = filtered_data.loc[filtered_data.groupby('ID заявки')['Дата заявки'].idxmax()]
     status_counts_by_product = max_date_per_application['Статус'].value_counts()
-
+    rate_analysis = filtered_data.groupby(['Дата заявки', 'Продукт'])['Ставка'].agg(['mean', 'min', 'max']).reset_index()
+    rate_analysis.columns = ['Дата заявки', 'Продукт', 'Средняя ставка', 'Минимальная ставка', 'Максимальная ставка']
     total_applications = filtered_data['ID заявки'].count()
     approved_applications = filtered_data[filtered_data['Статус'] == 'Выдан']['ID заявки'].count()
     conversion_rate = (approved_applications / total_applications) * 100 if total_applications > 0 else 0
@@ -80,11 +89,13 @@ async def update_dashboard(product: str):
     fig1 = px.bar(status_counts_by_product, title=f'Статусы заявок для {product}')
     fig2 = px.pie(values=[conversion_rate, 100 - conversion_rate], names=['Выдан', 'Отказ'], title=f'Конверсия для {product}')
     fig3 = px.line(sum_by_day, x='Дата заявки', y='Запрошенная сумма', color='Продукт', title=f"Сумма выдач по дням для {product}")
+    fig4 = px.line(rate_analysis, x='Дата заявки', y='Средняя ставка', color='Продукт', title='Распределение ставок')
 
     return {
         "statusGraph": fig1.to_json(),
         "conversionGraph": fig2.to_json(),
-        "sumGraph":  fig3.to_json()
+        "sumGraph":  fig3.to_json(),
+        "normGraph": fig4.to_json()
     }
 
 

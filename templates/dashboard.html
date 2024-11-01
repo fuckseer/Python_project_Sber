@@ -9,8 +9,7 @@
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-<div class="container" id="dashboard"> <!-- Добавлен id="dashboard" -->
-
+<div class="container" id="dashboard">
     <header>
         Credit Products Dashboard
     </header>
@@ -35,10 +34,15 @@
             <h3>Конверсия по продуктам</h3>
             <div id="conversion-graph">{{ graph_html2|safe }}</div>
         </div>
-
+    </div>
+    <div class="wide-graphs-container">
         <div class="graph-box">
             <h3>Сумма выдач по дням</h3>
             <div id="sum-graph">{{ graph_html3|safe }}</div>
+        </div>
+        <div class="graph-box">
+            <h3>Распределение ставок по продуктам</h3>
+            <div id="norm-graph">{{ graph_html4|safe }}</div>
         </div>
     </div>
 </div>
@@ -57,16 +61,18 @@
                 const statusGraph = document.getElementById("status-graph");
                 const conversionGraph = document.getElementById("conversion-graph");
                 const sumGraph = document.getElementById("sum-graph");
+                const normGraph = document.getElementById("norm-graph");
 
                 Plotly.react(statusGraph, JSON.parse(data.statusGraph).data, JSON.parse(data.statusGraph).layout);
                 Plotly.react(conversionGraph, JSON.parse(data.conversionGraph).data, JSON.parse(data.conversionGraph).layout);
                 Plotly.react(sumGraph, JSON.parse(data.sumGraph).data, JSON.parse(data.sumGraph).layout);
+                Plotly.react(normGraph, JSON.parse(data.normGraph).data, JSON.parse(data.normGraph).layout);
             })
             .catch(error => console.error('Error updating graphs:', error));
     });
 
     function downloadPDF() {
-        const element = document.getElementById('dashboard'); // Захват всего контейнера "dashboard"
+        const element = document.getElementById('dashboard');
         const options = {
             margin:       0.5,
             filename:     'Credit_Products_Report.pdf',

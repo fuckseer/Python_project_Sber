@@ -22,9 +22,11 @@
 ## Главная страница с дашбордом:
 Реализована функция по фильтрации продуктов, а также экспорту отчета в pdf.
 
-<img width="959" alt="image" src="https://github.com/user-attachments/assets/d82a0641-2748-4164-ac6d-8faf2b8ba47d">
-<img width="952" alt="image" src="https://github.com/user-attachments/assets/c05d1c10-1a44-4983-93a2-414ca23d7db8">
-<img width="945" alt="image" src="https://github.com/user-attachments/assets/fec4dbaa-f7ac-4ea0-b8fc-59a5dc2127b4">
+<img width="934" alt="image" src="https://github.com/user-attachments/assets/a639bf70-e58c-4ec1-bb65-34a3258e73ea">
+<img width="947" alt="image" src="https://github.com/user-attachments/assets/147b4850-a920-47b2-83dc-cd6ce7cc6af4">
+<img width="945" alt="image" src="https://github.com/user-attachments/assets/3ccdff5d-58a2-4398-814c-8f5d6a430072">
+<img width="937" alt="image" src="https://github.com/user-attachments/assets/e807fee4-8ae6-41bd-a8b9-229bed0e0914">
+
 
 
 

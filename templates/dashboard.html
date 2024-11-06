@@ -44,6 +44,10 @@
             <h3>Распределение ставок по продуктам</h3>
             <div id="norm-graph">{{ graph_html4|safe }}</div>
         </div>
+        <div class="graph-box">
+            <h3>Зависимость суммы от ставок</h3>
+            <div id="norm-sum-graph">{{ graph_html5|safe }}</div>
+        </div>
     </div>
 </div>
 
@@ -62,11 +66,13 @@
                 const conversionGraph = document.getElementById("conversion-graph");
                 const sumGraph = document.getElementById("sum-graph");
                 const normGraph = document.getElementById("norm-graph");
+                const normSumGraph = document.getElementById("norm-sum-graph");
 
                 Plotly.react(statusGraph, JSON.parse(data.statusGraph).data, JSON.parse(data.statusGraph).layout);
                 Plotly.react(conversionGraph, JSON.parse(data.conversionGraph).data, JSON.parse(data.conversionGraph).layout);
                 Plotly.react(sumGraph, JSON.parse(data.sumGraph).data, JSON.parse(data.sumGraph).layout);
                 Plotly.react(normGraph, JSON.parse(data.normGraph).data, JSON.parse(data.normGraph).layout);
+                Plotly.react(normSumGraph, JSON.parse(data.normSumGraph).data, JSON.parse(data.normSumGraph).layout);
             })
             .catch(error => console.error('Error updating graphs:', error));
     });

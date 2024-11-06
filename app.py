@@ -82,28 +82,38 @@ def create_graphs(df: pd.DataFrame, product: str = "all"):
     :param product: str - Название продукта для фильтрации данных; если "all", фильтрация не применяется.
     :return: Словарь с графиками в формате HTML.
     """
-    filtered_data = df if product == "all" else df[df['Продукт'] == product]
-    sum_by_day = filtered_data[filtered_data['Статус'] == 'Выдан'].groupby(['Дата заявки', 'Продукт'])[
-        'Запрошенная сумма'].sum().reset_index()
-    rate_analysis = filtered_data.groupby(['Дата заявки', 'Продукт'])['Ставка'].agg(
-        ['mean', 'min', 'max']).reset_index()
-    rate_analysis.columns = ['Дата заявки', 'Продукт', 'Средняя ставка', 'Минимальная ставка', 'Максимальная ставка']
 
-    total_applications = filtered_data['ID заявки'].count()
-    approved_applications = filtered_data[filtered_data['Статус'] == 'Выдан']['ID заявки'].count()
-    conversion_rate = (approved_applications / total_applications) * 100
+    filtered_data = df if product == "all" else df[df['Продукт'] == product]
+    sum_by_day = filtered_data.copy()
+    sum_by_day['Год'] = sum_by_day['Дата заявки'].dt.year
+    sum_by_day['Месяц'] = sum_by_day['Дата заявки'].dt.month
+    sum_by_day['День'] = sum_by_day['Дата заявки'].dt.day
+    sum_by_day = sum_by_day[sum_by_day['Статус'] == 'Выдан'].groupby(['Год', 'Месяц', 'День', 'Продукт'], as_index=False)[
+        'Запрошенная сумма'].sum()
+    rate_analysis = filtered_data.copy()
+    rate_analysis['Год'] = rate_analysis['Дата заявки'].dt.year
+    rate_analysis['Месяц'] = rate_analysis['Дата заявки'].dt.month
+    rate_analysis['День'] = rate_analysis['Дата заявки'].dt.day
+    rate_by_month = rate_analysis.groupby(['Год', 'Месяц', 'День', 'Продукт'], as_index=False)['Ставка'].agg(
+        ['mean', 'min', 'max'])
+    funnel = filtered_data.groupby(pd.to_datetime(filtered_data['Дата заявки']).dt.year, as_index=False)['Статус'].value_counts()
 
     fig1 = px.bar(prepare_data(filtered_data)['status_counts_by_product'], title=f"Статусы заявок для {product}")
-    fig2 = px.pie(values=[conversion_rate, 100 - conversion_rate], title=f'Конверсия для {product}')
-    fig3 = px.line(sum_by_day, x='Дата заявки', y='Запрошенная сумма', color='Продукт',
+    fig2 = px.funnel(funnel, x='count', y='Статус', color='Дата заявки', title=f'Воронка для {product}')
+    fig3 = px.line(sum_by_day, x='День', y='Запрошенная сумма', color='Год',
                    title=f"Сумма выдач по дням для {product}")
-    fig4 = px.line(rate_analysis, x='Дата заявки', y='Средняя ставка', color='Продукт', title=f'Распределение ставок {product}')
+    fig4 = px.line(rate_by_month, x='День', y='mean', color='Год', title=f'Распределение ставок {product}',
+                   line_group='Год')
+    fig5 = px.scatter(filtered_data[filtered_data['Статус'] == 'Выдан'], x='Запрошенная сумма', y='Ставка', color='Продукт',
+                      title='Зависимость ставки от запрошенной суммы', labels={"Запрошенная сумма": "Запрошенная сумма (руб.)", "Ставка":"Ставка (%)"},
+                      hover_data=['ID заявки'])
 
     return {
         "statusGraph": fig1,
         "conversionGraph": fig2,
         "sumGraph": fig3,
-        "normGraph": fig4
+        "normGraph": fig4,
+        "normSumGraph": fig5
     }
 
 
@@ -130,6 +140,7 @@ async def upload_file(request: Request, file: UploadFile = File(...)):
         "graph_html2": graph_data["conversionGraph"].to_html(full_html=False),
         "graph_html3": graph_data["sumGraph"].to_html(full_html=False),
         "graph_html4": graph_data["normGraph"].to_html(full_html=False),
+        "graph_html5": graph_data["normSumGraph"].to_html(full_html=False),
         "products": product_data["products"]
     })
 
@@ -152,7 +163,8 @@ async def update_dashboard(product: str):
         "statusGraph": graph_data["statusGraph"].to_json(),
         "conversionGraph": graph_data["conversionGraph"].to_json(),
         "sumGraph": graph_data["sumGraph"].to_json(),
-        "normGraph": graph_data["normGraph"].to_json()
+        "normGraph": graph_data["normGraph"].to_json(),
+        "normSumGraph": graph_data['normSumGraph'].to_json()
     }
 
 
